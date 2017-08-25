@@ -35,11 +35,11 @@ function FindsWhatBranchRepositoryIsOn() {
 	 flagWhatBranchOn="$flagOnCorrectBranch"
 	elif [ "$branch_option" = "$branch_I_want" ]
 	then
-	 #brach is there but we are not on it
+	 #branch is there but we are not on it
 	 flagWhatBranchOn="$flagOnBranchMaster"
 	elif [ "$branch_option" = "$branch_I_want_dev" ]
 	then
-	 #brach is there but we are not on it
+	 #branch is there but we are not on it
 	 flagWhatBranchOn="$FlagOnBranchDev"
 	fi
 }
