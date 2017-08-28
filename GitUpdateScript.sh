@@ -9,19 +9,10 @@ clear
 
 
 SECONDS=0  #set seconds counter back to 0
-function RemoveUnwantedCharFromDirVar()
-{
-	file_dir=${file_dir#?}  #${var#?} removes first char of varible var
-	full_dir=$home_dir$file_dir  #merge home dir with the dir the git repository is in
-	###remove git file name searched for, char by char###
-	full_dir=${full_dir%?}  #remove right char
-	full_dir=${full_dir%?}  #remove right char
-	full_dir=${full_dir%?}  #remove right char
-	full_dir=${full_dir%?}  #remove right char
-}
+
 function GoToGitRepositoryDirectory(){
-	cd  #go to home dir
-	cd $full_dir #change to git dir
+
+	cd $home_dir${file_dir:1:-4} #change to git dir
 	pwd #pint dir to screen
 }
 function FindsWhatBranchRepositoryIsOn() {
@@ -48,7 +39,7 @@ function MoveToCorrectBranch(){
 	then
 	  echo "######################################################"
 	  echo "# Could NOT find $branch_I_want or $branch_I_want_dev branches              #"
-	  echo "# Please check that you are on the corred branch     #" 
+	  echo "# Please check that you are on the corred branch     #"
 	  echo "# Will run update on current branch                  #"
 	  echo "######################################################"
 	elif [ "$flagWhatBranchOn" -eq "$flagOnCorrectBranch" ]
@@ -77,8 +68,8 @@ function BranchChecking(){
 	flagOnBranchMaster=2
 	FlagOnBranchDev=3
 
-	
-	flagWhatBranchOn="$flagDontKnowBranch" 
+
+	flagWhatBranchOn="$flagDontKnowBranch"
 	echo "Current Branches"
 	git branch| tee log_branch
 	branch_I_want="master"
@@ -89,9 +80,9 @@ function BranchChecking(){
 	do # will make sure we are on the master branch and change flag
 
 	FindsWhatBranchRepositoryIsOn
-		
+
 	done < log_branch  #end of loop
-	rm log_branch #rm removes/dels the file 
+	rm log_branch #rm removes/dels the file
 
 	MoveToCorrectBranch
 
@@ -99,23 +90,24 @@ function BranchChecking(){
 
 function RemoveFileCreatedToHoldGitReposNames(){
 cd $home_dir #go back to the starting dir
-rm Temp_dir_log #rm removes/dels the file 
+rm Temp_dir_log #rm removes/dels the file
 }
 
 home_dir=$(pwd)  #v1 holds the home dir
 echo "Git Repositories Found:"
+
+# todo Count from find instead of iterating loop from file
 find -name .git| tee Temp_dir_log  #finds file with name .gitignore and stores results in file called FILENAME
 
 echo "Going to each git repositories and update:"
 while read file_dir
-do 
-	RemoveUnwantedCharFromDirVar
+do
 
 	GoToGitRepositoryDirectory
 
 	BranchChecking  #call branch checking function
 
-	git pull  
+	git pull
 
 	echo "Elapsed Time:" $SECONDS
 done < Temp_dir_log
@@ -124,10 +116,4 @@ done < Temp_dir_log
 RemoveFileCreatedToHoldGitReposNames
 
 echo "Total Elapsed Time:" $SECONDS
-
-
-
-
-
-
 
