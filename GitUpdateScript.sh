@@ -13,46 +13,46 @@ SECONDS=0  #set seconds counter back to 0
 function GoToGitRepositoryDirectory(){
 
 	cd $home_dir${file_dir:1:-4} #change to git dir
-	pwd #pint dir to screen
+	echo "Starting git repository refresh @" $(pwd) #print dir to screen
 }
 function FindsWhatBranchRepositoryIsOn() {
-	if [ "$branch_option" = "* $branch_I_want" ] #note "* " is used to show branch selection
+	if [[ "$branch_option" = "* $branch_I_want" ]] #note "* " is used to show branch selection
 	then
 	 #echo "On the correct branch"
 	 flagWhatBranchOn="$flagOnCorrectBranch"
-	elif [ "$branch_option" = "* $branch_I_want_dev" ]
+	elif [[ "$branch_option" = "* $branch_I_want_dev" ]]
 	then
 	 #echo "On the correct branch"
 	 flagWhatBranchOn="$flagOnCorrectBranch"
-	elif [ "$branch_option" = "$branch_I_want" ]
+	elif [[ "$branch_option" = "$branch_I_want" ]]
 	then
 	 #branch is there but we are not on it
 	 flagWhatBranchOn="$flagOnBranchMaster"
-	elif [ "$branch_option" = "$branch_I_want_dev" ]
+	elif [[ "$branch_option" = "$branch_I_want_dev" ]]
 	then
 	 #branch is there but we are not on it
 	 flagWhatBranchOn="$FlagOnBranchDev"
 	fi
 }
 function MoveToCorrectBranch(){
-	if [ "$flagWhatBranchOn" -eq "$flagDontKnowBranch" ]
+	if [[ "$flagWhatBranchOn" -eq "$flagDontKnowBranch" ]]
 	then
 	  echo "######################################################"
 	  echo "# Could NOT find $branch_I_want or $branch_I_want_dev branches              #"
-	  echo "# Please check that you are on the corred branch     #"
+	  echo "# Please check that you are on the correct branch     #"
 	  echo "# Will run update on current branch                  #"
 	  echo "######################################################"
-	elif [ "$flagWhatBranchOn" -eq "$flagOnCorrectBranch" ]
+	elif [[ "$flagWhatBranchOn" -eq "$flagOnCorrectBranch" ]]
 	then
 	  echo "On the correct branch"
 	else
 	 echo "On wrong branch will try and change- please note will run git stash command"
 
-		if [ "$flagWhatBranchOn" -eq "$flagOnBranchMaster" ]
+		if [[ "$flagWhatBranchOn" -eq "$flagOnBranchMaster" ]]
 		then
 		 git stash # saves changes but does not commit before changing branch
 		 git checkout $branch_I_want
-		elif [ "$flagWhatBranchOn" -eq "$FlagOnBranchDev" ]
+		elif [[ "$flagWhatBranchOn" -eq "$FlagOnBranchDev" ]]
 		then
 		 git stash # saves changes but does not commit before changing branch
 		 git checkout $branch_I_want_dev
@@ -87,33 +87,37 @@ function BranchChecking(){
 	MoveToCorrectBranch
 
 }
+function FindGitReposotories()
+{
+    arrayFileDir=($(find -name .git))
+    numberOfGitRepos=$(find -name .git | wc -l)  #wc is word count -l makes it count lines, | is pipe and find finds all .git
 
-function RemoveFileCreatedToHoldGitReposNames(){
-cd $home_dir #go back to the starting dir
-rm Temp_dir_log #rm removes/dels the file
+    echo "Going to each git repository and updating:"
+
+    for (( n=0; n<$numberOfGitRepos; n++ ))
+    do
+        file_dir=${arrayFileDir[$n]}
+        GoToGitRepositoryDirectory
+
+        BranchChecking  #call branch checking function
+
+        git pull
+
+        echo "Elapsed Time:" $SECONDS
+        echo ""
+    done
 }
 
+
+
+#########################################
+##########   Script Start  ##############
+#########################################
+
 home_dir=$(pwd)  #v1 holds the home dir
-echo "Git Repositories Found:"
 
-# todo Count from find instead of iterating loop from file
-find -name .git| tee Temp_dir_log  #finds file with name .gitignore and stores results in file called FILENAME
+FindGitReposotories
 
-echo "Going to each git repositories and update:"
-while read file_dir
-do
-
-	GoToGitRepositoryDirectory
-
-	BranchChecking  #call branch checking function
-
-	git pull
-
-	echo "Elapsed Time:" $SECONDS
-done < Temp_dir_log
-
-
-RemoveFileCreatedToHoldGitReposNames
 
 echo "Total Elapsed Time:" $SECONDS
 
