@@ -12,11 +12,11 @@ function MoveToDefaultBranches(){
     local arrayDefaultBranches=(master develop)
 
     local i
-    for (( i=0; i<${#arrayDefaultBranches[*]}; i++ ))
+    for ((i=0; i<${#arrayDefaultBranches[*]}; i++ ))
     do
-        if [[ $(git branch -a | grep ${arrayDefaultBranches[i]} | wc -l) -gt 0 ]]
+        if [[ $(git branch -a | grep "${arrayDefaultBranches[i]}" -c) -gt 0 ]]
         then
-             CheckoutBranchAndPull ${arrayDefaultBranches[i]}
+             CheckoutBranchAndPull "${arrayDefaultBranches[i]}"
              flagRequiredBranchFound=1
         fi
     done
@@ -24,7 +24,7 @@ function MoveToDefaultBranches(){
 
 function CheckoutBranchAndPull(){
     git stash # saves changes but does not commit before changing branch
-    git checkout ${1}
+    git checkout "${1}"
     git pull
 }
 
@@ -34,8 +34,8 @@ function MoveToCorrectBranch(){
 
     if [[ ${1} -gt 0 ]]
     then
-        echo "Requested branch found: "${2}
-        CheckoutBranchAndPull ${2}
+        echo "Requested branch found:" "${2}"
+        CheckoutBranchAndPull "${2}"
         local flagRequiredBranchFound=1
     else
         echo "Moving to Default Branch"
@@ -57,16 +57,16 @@ function DoesBranchExistForParameterPassedIntoScript(){
     then
         branchExist=0
     else
-        branchExist=$(git branch -a | grep ${1} | wc -l)
+        branchExist=$(git branch -a | grep "${1}" -c)
     fi
 
-    echo $branchExist #acting as a return
+    echo "$branchExist" #acting as a return
 }
 
 function GoToGitRepositoryDirectory(){
 
-	cd $1${2:1:-4} #change to git dir
-	echo "Starting git repository refresh @" $(pwd) #print dir to screen
+cd "$1""${2:1:-4}" || exit #change to git dir
+echo "Starting git repository refresh @" "$(pwd)" #print dir to screen
 }
 
 function PrintParameterPassedIntoScript(){
@@ -86,21 +86,21 @@ homeDir=$(pwd)  #v1 holds the home dir
 
 requestedBranchName=$1
 
-arrayGitDir=($(find -name .git))
-numberOfGitRepos=$(find -name .git | wc -l)  #wc is word count -l makes it count lines, | is pipe and find finds all .git
+arrayGitDir=("$(find . -name .git)")
+numberOfGitRepos="$(find . -name .git | wc -l)"  #wc is word count -l makes it count lines, | is pipe and find finds all .git
 
 echo "Going to each git repository and updating:"
 
-PrintParameterPassedIntoScript ${requestedBranchName}
+PrintParameterPassedIntoScript "${requestedBranchName}"
 
-for (( i=0; i<$numberOfGitRepos; i++ ))
+for (( i=0; i<"$numberOfGitRepos"; i++ ))
 do
     gitDir=${arrayGitDir[$i]}
-    GoToGitRepositoryDirectory ${homeDir} ${gitDir}
+    GoToGitRepositoryDirectory "${homeDir}" "${gitDir}"
 
-    doesBranchExist=$(DoesBranchExistForParameterPassedIntoScript ${requestedBranchName})
+    doesBranchExist=$(DoesBranchExistForParameterPassedIntoScript "${requestedBranchName}")
 
-    MoveToCorrectBranch ${doesBranchExist} ${requestedBranchName}
+    MoveToCorrectBranch "${doesBranchExist}" "${requestedBranchName}"
 
     echo "Elapsed Time:" $SECONDS
     echo ""
@@ -109,4 +109,3 @@ done
 
 
 echo "Total Elapsed Time:" $SECONDS
-
