@@ -56,6 +56,12 @@ function DoesBranchExistForParameterPassedIntoScript(){
     if [[ ${#1} -eq 0 ]]  #${#var}  Use the length of var.
     then
         branchExist=0
+
+
+
+
+
+
     else
         branchExist=$(git branch -a | grep "${1}" -c)
     fi
@@ -86,8 +92,8 @@ homeDir=$(pwd)  #v1 holds the home dir
 
 requestedBranchName=$1
 
-arrayGitDir=($(find . -name .git))
-numberOfGitRepos=$(find . -name .git | wc -l)  #wc is word count -l makes it count lines, | is pipe and find finds all .git
+mapfile -t arrayGitDir < <(find . -name .git)
+numberOfGitRepos=$(find . -name .git | wc -l) #wc is word count -l makes it count lines, | is pipe and find finds all .git
 
 echo "Going to each git repository and updating:"
 
