@@ -86,14 +86,14 @@ homeDir=$(pwd)  #v1 holds the home dir
 
 requestedBranchName=$1
 
-arrayGitDir=($(find . -name .git))
-numberOfGitRepos=$(find . -name .git | wc -l)  #wc is word count -l makes it count lines, | is pipe and find finds all .git
+arrayGitDir=("$(find . -name .git)")
+numberOfGitRepos="$(find . -name .git | wc -l)"  #wc is word count -l makes it count lines, | is pipe and find finds all .git
 
 echo "Going to each git repository and updating:"
 
 PrintParameterPassedIntoScript "${requestedBranchName}"
 
-for (( i=0; i<numberOfGitRepos; i++ ))
+for (( i=0; i<"$numberOfGitRepos"; i++ ))
 do
     gitDir=${arrayGitDir[$i]}
     GoToGitRepositoryDirectory "${homeDir}" "${gitDir}"
