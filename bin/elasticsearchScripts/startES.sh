@@ -11,9 +11,6 @@ lib=$ELK_POC_HOME/lib
 LOG_DIR=$logs/elasticsearch
 logname=elasticsearch.log
 
-#We need to set the following value to avoid a potential maximum map count error
-sudo sysctl -w vm.max_map_count=262144
-
 # Elasticsearch installation home 
 echo "Starting Elasticsearch"
-sh $lib/elasticsearch-5.5.0/bin/elasticsearch -d -p elasticsearchScripts/elasticsearch.pid > $LOG_DIR/$logname
+nohup sh $lib/elasticsearch-5.5.0/bin/elasticsearch > $logs/elasticsearch/nohup.elasticsearch & echo $! >>elasticsearchScripts/elasticsearch.pid 

@@ -13,4 +13,4 @@ logname=logstash.log
 
 # Logstash installation home  
 echo "Starting Logstash"
-nohup sh $lib/logstash-5.5.2/bin/logstash -f logstashScripts/logstash.conf & echo $! >>logstashScripts/logstash.pid
+nohup sh $lib/logstash-5.5.2/bin/logstash -f logstashScripts/logstash.conf > $logs/logstash/nohup.logstash & echo $! >>logstashScripts/logstash.pid

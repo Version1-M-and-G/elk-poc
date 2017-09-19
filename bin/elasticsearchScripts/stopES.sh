@@ -18,7 +18,7 @@ if [ $pid_count -eq 1 ]
 		echo "Elasticsearch is attempting to shut down"
 		kill "$(cat elasticsearchScripts/elasticsearch.pid)"
 		echo "Verify if the process is still running"
-		proc_count=$(ps -eaf | grep "$(cat elasticsearchScripts/elasticsearch.pid)" | wc -w)
+		proc_count=$(ps -eaf | grep "$(cat elasticsearchScripts/elasticsearch.pid)" | wc -l)
 
 		if [ $proc_count -lt 2 ]
 			then

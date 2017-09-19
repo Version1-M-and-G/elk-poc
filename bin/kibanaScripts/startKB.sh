@@ -13,4 +13,4 @@ logname=kibana.log
 
 # Elasticsearch installation home 
 echo "Starting Kibana"
-sh $lib/kibana-5.5.0-linux-x86_64/bin/kibana & echo $! >>kibanaScripts/kibana.pid
+nohup sh $lib/kibana-5.5.0-linux-x86_64/bin/kibana > $logs/kibana/nohup.kibana & echo $! >>kibanaScripts/kibana.pid 
