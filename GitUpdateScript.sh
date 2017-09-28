@@ -2,7 +2,7 @@
 #: Title       : Update Git Repositories
 #: Author      : "David Tuohy" <david.tuohy@version1.com>
 #: Version     : 1.0
-#: Description : finds the .git files and "git pull" the changes
+#: Description : finds all git repositories (.git folders), and performs a git pull on the specified/default branch
 #: Options     : None
 clear
 SECONDS=0  #set seconds counter back to 0
@@ -65,8 +65,8 @@ function DoesBranchExistForParameterPassedIntoScript(){
 
 function GoToGitRepositoryDirectory(){
 
-cd "$1""${2:1:-4}" || exit #change to git dir
-echo "Starting git repository refresh @" "$(pwd)" #print dir to screen
+    cd $(dirname "$1""${2:1}") || exit #change to git dir
+    echo "Starting git repository refresh @" "$(pwd)" #print dir to screen
 }
 
 function PrintParameterPassedIntoScript(){
